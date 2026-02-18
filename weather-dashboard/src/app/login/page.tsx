@@ -2,68 +2,110 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LayoutTemplate, User, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight, LogIn } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim() !== "") {
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userName", name);
-      
-      router.push("/");
-      
-      
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Wir speichern die echten Daten aus der MongoDB Cloud im Browser
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userName", data.user.firstName);
+        localStorage.setItem("userLastName", data.user.lastName);
+        localStorage.setItem("userEmail", data.user.email);
+        
+        // Weiterleitung zum Dashboard
+        router.push("/");
+        // Kurzer Refresh, damit der Header den Namen sofort anzeigt
+        setTimeout(() => window.location.reload(), 100);
+      } else {
+        alert("Fehler: " + data.message);
+      }
+    } catch  {
+      alert("Verbindung zur Datenbank fehlgeschlagen.");
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen bg-[#F4F7F6] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-[3rem] border-2 border-gray-100 p-10 shadow-xl">
-        <div className="flex flex-col items-center mb-10">
-          <div className="bg-blue-600 p-4 rounded-2xl mb-4 shadow-lg shadow-blue-100">
-            <LayoutTemplate size={32} className="text-white" />
+      <div className="bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl border-2 border-gray-100 animate-in fade-in zoom-in duration-300">
+        
+        {/* Header */}
+        <div className="text-center mb-10">
+          <div className="bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <LogIn className="text-blue-600" size={32} />
           </div>
-          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
-            Willkommen zurück
-          </h1>
-          <p className="text-gray-400 font-bold text-xs mt-2 uppercase tracking-widest">
-            Bitte melde dich an
-          </p>
+          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Anmelden</h1>
+          <p className="text-gray-500 font-medium text-sm mt-2">Willkommen zurück im Dashboard</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Dein Name</label>
+        <form onSubmit={handleLogin} className="space-y-4">
+          {/* E-Mail */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Deine E-Mail</label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input 
-                type="text" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="z.B. Isabelle" 
-                className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold outline-none focus:border-blue-400 transition-all"
                 required
+                type="email" 
+                placeholder="marc@beispiel.de" 
+                className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
 
+          {/* Passwort */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Dein Passwort</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input 
+                required
+                type="password" 
+                placeholder="••••••••" 
+                className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Login Button */}
           <button 
-            type="submit"
-            className="w-full bg-gray-900 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-blue-600 transition-all shadow-lg active:scale-95 group"
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-gray-900 transition-all shadow-lg active:scale-95 disabled:opacity-50 mt-4"
           >
-            Dashboard betreten
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            {loading ? "Wird geprüft..." : "Einloggen"} 
+            {!loading && <ArrowRight size={18} />}
           </button>
         </form>
 
-        <p className="text-[10px] text-gray-400 text-center mt-8 uppercase font-bold tracking-widest">
-          Deine Daten bleiben lokal in deinem Browser
+        {/* Link zur Registrierung */}
+        <p className="text-center mt-8 text-sm font-medium text-gray-500">
+          Neu hier?{" "}
+          <Link href="/register" className="text-blue-600 font-bold hover:underline">
+            Konto erstellen
+          </Link>
         </p>
       </div>
     </div>

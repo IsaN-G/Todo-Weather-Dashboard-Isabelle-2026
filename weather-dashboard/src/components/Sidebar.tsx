@@ -50,11 +50,11 @@ export default function Sidebar() {
             />
           </Link>
          
-          <Link href="/#aufgaben-liste">
+          <Link href="/aufgaben">
             <NavItem 
               icon={CheckSquare} 
               label="Aufgaben" 
-              active={pathname === "/#aufgaben-liste"} 
+              active={pathname === "/aufgaben"} 
             />
           </Link>
           <Link href="/wetter">

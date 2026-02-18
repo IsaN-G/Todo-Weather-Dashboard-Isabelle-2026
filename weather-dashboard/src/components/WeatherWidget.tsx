@@ -52,6 +52,8 @@ export default function WeatherWidget() {
       
       setWeatherData(data as WeatherData);
       localStorage.setItem("lastWeatherCity", cityName);
+      localStorage.setItem("lastTemp", Math.round(data.main.temp).toString()); 
+localStorage.setItem("lastWeatherCondition", data.weather[0].description);
     } catch (err) {
       
       if (err instanceof Error) {
