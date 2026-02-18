@@ -8,7 +8,8 @@ import {
   LogOut, 
   LucideIcon, 
   LayoutTemplate, 
-  Target 
+  Target,
+  Calendar 
 } from "lucide-react";
 
 import Link from "next/link";
@@ -21,9 +22,10 @@ export default function Sidebar() {
   const handleLogout = () => {
     
     document.cookie = "isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
+   
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userName");
+   
     router.push("/login");
     window.location.reload();
   };
@@ -41,7 +43,7 @@ export default function Sidebar() {
           </span>
         </div>
 
-      
+   
         <nav className="space-y-2">
           <Link href="/">
             <NavItem 
@@ -58,6 +60,15 @@ export default function Sidebar() {
               active={pathname === "/aufgaben"} 
             />
           </Link>
+
+          <Link href="/kalender">
+            <NavItem 
+              icon={Calendar} 
+              label="Kalender" 
+              active={pathname === "/kalender"} 
+            />
+          </Link>
+
           <Link href="/wetter">
             <NavItem 
               icon={CloudSun} 
@@ -65,6 +76,7 @@ export default function Sidebar() {
               active={pathname === "/wetter"} 
             />
           </Link>
+
           <Link href="/ziele">
             <NavItem 
               icon={Target} 
@@ -75,6 +87,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
+    
       <div className="space-y-2">
         <Link href="/settings">
           <NavItem 
