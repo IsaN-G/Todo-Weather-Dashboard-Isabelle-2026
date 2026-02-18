@@ -18,20 +18,19 @@ import { usePathname, useRouter } from "next/navigation";
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-
   const handleLogout = () => {
-    
+  
     document.cookie = "isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-   
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userName");
-   
+    document.cookie = "userName=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    
+ 
+    localStorage.clear();
+    
     router.push("/login");
-    window.location.reload();
+    setTimeout(() => window.location.reload(), 100);
   };
-
   return (
-    <div className="flex flex-col h-full p-4 justify-between bg-white border-r-2 border-gray-100 shadow-sm">
+    <div className="flex flex-col h-full p-4 justify-between bg-gray-200 border-r-2 border-gray-400 shadow-sm">
       <div>
        
         <div className="flex items-center gap-3 mb-10 px-2">

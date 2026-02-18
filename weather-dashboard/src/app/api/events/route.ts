@@ -1,32 +1,45 @@
 import { NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
-
+import { cookies } from "next/headers";
+import { ObjectId } from "mongodb";
 
 const DB_NAME = "dashboard_db";
 
 export async function GET() {
   try {
+    const cookieStore = await cookies();
+    const userName = cookieStore.get("userName")?.value;
+
+    if (!userName) return NextResponse.json([], { status: 200 });
+
     const client = await clientPromise;
     const db = client.db(DB_NAME);
-    const events = await db.collection("events").find({}).toArray();
+    
+    const events = await db.collection("events").find({ userId: userName }).toArray();
     return NextResponse.json(events);
-  } catch  {
+  } catch {
     return NextResponse.json({ error: "Fehler beim Laden" }, { status: 500 });
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body = await req.json();
+    const cookieStore = await cookies();
+    const userName = cookieStore.get("userName")?.value;
+    if (!userName) return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 });
+
+    const body = await request.json();
     const client = await clientPromise;
     const db = client.db(DB_NAME);
+
+   
     const result = await db.collection("events").insertOne({
       ...body,
+      userId: userName,
       createdAt: new Date()
     });
     return NextResponse.json(result);
-  } catch  {
+  } catch {
     return NextResponse.json({ error: "Fehler beim Speichern" }, { status: 500 });
   }
 }
@@ -35,47 +48,21 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
+    const cookieStore = await cookies();
+    const userName = cookieStore.get("userName")?.value;
 
-    if (!id) {
-      return NextResponse.json({ error: "Keine ID vorhanden" }, { status: 400 });
-    }
-
-    const client = await clientPromise;
-    const db = client.db(DB_NAME); 
-
-    const result = await db.collection("events").deleteOne({
-      _id: new ObjectId(id),
-    });
-
-    if (result.deletedCount === 1) {
-      return NextResponse.json({ message: "Termin gelöscht" });
-    } else {
-      return NextResponse.json({ error: "Termin nicht gefunden" }, { status: 404 });
-    }
-  } catch  {
-    return NextResponse.json({ error: "Fehler beim Löschen" }, { status: 500 });
-  }
-}
-
-export async function PUT(request: Request) {
-  try {
-    const body = await request.json();
-    const { _id, ...updateData } = body;
-
-    if (!_id) {
-      return NextResponse.json({ error: "Keine ID für Update vorhanden" }, { status: 400 });
-    }
+    if (!id || !userName) return NextResponse.json({ error: "Ungültig" }, { status: 400 });
 
     const client = await clientPromise;
-    const db = client.db(DB_NAME); 
+    const db = client.db(DB_NAME);
     
-    const result = await db.collection("events").updateOne(
-      { _id: new ObjectId(_id) },
-      { $set: updateData }
-    );
-
-    return NextResponse.json({ message: "Aktualisiert", modifiedCount: result.modifiedCount });
+    await db.collection("events").deleteOne({ 
+      _id: new ObjectId(id),
+      userId: userName 
+    });
+    
+    return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ error: "Fehler beim Update" }, { status: 500 });
+    return NextResponse.json({ error: "Löschen fehlgeschlagen" }, { status: 500 });
   }
 }

@@ -26,29 +26,24 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      console.log("Login API Antwort:", { status: response.status, data });
-
       if (response.ok) {
-        
+      
         localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("userName", data.user.firstName || "Benutzer");
-        localStorage.setItem("userLastName", data.user.lastName || "");
-        localStorage.setItem("userEmail", data.user.email || email);
+        localStorage.setItem("userName", data.user.firstName);
+        localStorage.setItem("userLastName", data.user.lastName);
+        localStorage.setItem("userEmail", data.user.email);
 
-        console.log("localStorage gesetzt → Redirect zu /");
+       
+        document.cookie = `isLoggedIn=true; path=/; max-age=86400; SameSite=Lax`;
+        document.cookie = `userName=${data.user.firstName}; path=/; max-age=86400; SameSite=Lax`;
 
         router.replace("/");
-        
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 400);
+        setTimeout(() => { window.location.href = "/"; }, 100);
       } else {
-       
-        setError(data.message || "Anmeldung fehlgeschlagen. Bitte versuche es erneut.");
+        setError(data.message || "Anmeldung fehlgeschlagen");
       }
-    } catch (err) {
-      console.error("Login Fehler:", err);
-      setError("Verbindungsproblem. Ist der Server erreichbar?");
+    } catch {
+      setError("Verbindungsfehler zur Datenbank.");
     } finally {
       setLoading(false);
     }
@@ -56,73 +51,55 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#F4F7F6] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl border-2 border-gray-100 animate-in fade-in zoom-in duration-300">
-        
-        <div className="text-center mb-10">
-          <div className="bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <LogIn className="text-blue-600" size={32} />
+      <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10 border-2 border-white">
+        <div className="flex flex-col items-center mb-8">
+          <div className="bg-blue-600 p-4 rounded-2xl shadow-lg shadow-blue-100 mb-4">
+            <LogIn className="text-white" size={32} />
           </div>
-          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Anmelden</h1>
-          <p className="text-gray-500 font-medium text-sm mt-2">Willkommen zurück im Dashboard</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Willkommen zurück</h1>
+          <p className="text-gray-400 font-bold text-sm uppercase tracking-widest mt-2">Dashboard Login</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3 text-red-700 text-sm">
-            <AlertCircle size={20} className="mt-0.5 flex-shrink-0" />
-            <span>{error}</span>
+          <div className="bg-red-50 border-2 border-red-100 text-red-600 p-4 rounded-2xl mb-6 flex items-center gap-3 animate-shake">
+            <AlertCircle size={20} />
+            <p className="text-xs font-black uppercase">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleLogin}>
-          <div className="space-y-5">
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Deine E-Mail</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input 
-                  required
-                  type="email"
-                  autoComplete="email"
-                  placeholder="deine@email.de"
-                  className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value.trim())}
-                />
-              </div>
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-gray-400 ml-4">E-Mail Adresse</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input 
+                required type="email" placeholder="name@beispiel.de"
+                className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
+                value={email} onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Dein Passwort</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input 
-                  required
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-gray-900 transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-            >
-              {loading ? "Wird geprüft..." : "Einloggen"} 
-              {!loading && <ArrowRight size={18} />}
-            </button>
           </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Passwort</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input 
+                required type="password" placeholder="••••••••"
+                className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
+                value={password} onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-gray-900 transition-all shadow-lg active:scale-95 disabled:opacity-50 mt-4">
+            {loading ? "Wird geprüft..." : "Einloggen"}
+            {!loading && <ArrowRight size={18} />}
+          </button>
         </form>
 
         <p className="text-center mt-8 text-sm font-medium text-gray-500">
-          Neu hier?{" "}
-          <Link href="/register" className="text-blue-600 font-bold hover:underline">
-            Konto erstellen
-          </Link>
+          Neu hier? <Link href="/register" className="text-blue-600 font-bold hover:underline">Konto erstellen</Link>
         </p>
       </div>
     </div>
