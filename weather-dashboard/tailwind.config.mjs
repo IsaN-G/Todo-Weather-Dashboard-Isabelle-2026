@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-// 1. Weise das Objekt einer Variable zu
+
 const config = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",

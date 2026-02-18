@@ -29,14 +29,14 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Erfolg! Wir speichern den Namen lokal für die Begrüßung
+        
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userName", formData.firstName);
         localStorage.setItem("userEmail", formData.email);
         localStorage.setItem("userLastName", formData.lastName);
         
         router.push("/");
-        // Kurzer Reload, damit das Layout den Login-Status erkennt
+      
         setTimeout(() => window.location.reload(), 100);
       } else {
         alert("Fehler: " + data.message);
@@ -52,7 +52,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-[#F4F7F6] flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl border-2 border-gray-100 animate-in fade-in zoom-in duration-300">
         
-        {/* Header */}
+      
         <div className="text-center mb-10">
           <div className="bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <UserPlus className="text-blue-600" size={32} />
@@ -62,7 +62,7 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Vor- und Nachname */}
+         
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Vorname</label>
@@ -84,7 +84,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* E-Mail */}
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase text-gray-400 ml-4">E-Mail Adresse</label>
             <div className="relative">
@@ -99,7 +98,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Passwort */}
+        
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Passwort</label>
             <div className="relative">
@@ -114,7 +113,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button 
             type="submit" 
             disabled={loading}
@@ -125,7 +123,7 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        {/* Footer Link */}
+      
         <p className="text-center mt-8 text-sm font-medium text-gray-500">
           Du hast schon ein Konto?{" "}
           <Link href="/login" className="text-blue-600 font-bold hover:underline">

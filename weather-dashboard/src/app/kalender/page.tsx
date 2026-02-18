@@ -51,7 +51,7 @@ export default function ClassicGoogleCalendar() {
   const [currentMonth, setCurrentMonth] = useState(1);
   const [currentYear, setCurrentYear] = useState(2026);
 
-  // Tailwind-Purge-Schutz
+ 
   const tailwindSafeguard = (
     <div className="hidden">
       bg-green-200 text-green-900 border-green-400
@@ -176,7 +176,6 @@ export default function ClassicGoogleCalendar() {
     >
       {tailwindSafeguard}
 
-      {/* HEADER */}
       <header className="flex items-center justify-between px-4 py-2 border-b border-gray-300">
         <div className="flex items-center gap-4">
           <div className="flex border border-gray-300 rounded shadow-sm">
@@ -218,7 +217,7 @@ export default function ClassicGoogleCalendar() {
         </button>
       </header>
 
-      {/* WOCHENTAGE */}
+     
       <div
         style={{
           display: "grid",

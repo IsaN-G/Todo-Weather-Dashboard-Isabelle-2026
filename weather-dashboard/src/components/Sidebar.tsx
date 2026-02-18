@@ -10,6 +10,7 @@ import {
   LayoutTemplate, 
   Target 
 } from "lucide-react";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -18,12 +19,12 @@ export default function Sidebar() {
   const router = useRouter();
 
   const handleLogout = () => {
+    
+    document.cookie = "isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userName");
-    
     router.push("/login");
-
     window.location.reload();
   };
 

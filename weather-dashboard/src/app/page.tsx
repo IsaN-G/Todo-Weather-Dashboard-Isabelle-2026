@@ -9,13 +9,13 @@ import StatCards from "@/components/StatCards";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
-  // Initialisierung über eine Funktion verhindert oft den Fehler
+
   const [userName, setUserName] = useState("Gast");
 
   useEffect(() => {
     const savedName = localStorage.getItem("userName");
     if (savedName) {
-      // setTimeout entkoppelt den State-Wechsel vom ersten Render-Vorgang
+   
       const timeoutId = setTimeout(() => {
         setUserName(savedName);
       }, 0);

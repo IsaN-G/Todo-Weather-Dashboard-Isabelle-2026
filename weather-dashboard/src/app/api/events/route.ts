@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
 
-// Wir nutzen konsequent die dashboard_db, wie in deinem GET/POST
+
 const DB_NAME = "dashboard_db";
 
 export async function GET() {
@@ -41,7 +41,7 @@ export async function DELETE(request: Request) {
     }
 
     const client = await clientPromise;
-    const db = client.db(DB_NAME); // KORRIGIERT: Von 'kalender' zu 'dashboard_db'
+    const db = client.db(DB_NAME); 
 
     const result = await db.collection("events").deleteOne({
       _id: new ObjectId(id),
@@ -67,7 +67,7 @@ export async function PUT(request: Request) {
     }
 
     const client = await clientPromise;
-    const db = client.db(DB_NAME); // KORRIGIERT: Von 'kalender' zu 'dashboard_db'
+    const db = client.db(DB_NAME); 
     
     const result = await db.collection("events").updateOne(
       { _id: new ObjectId(_id) },

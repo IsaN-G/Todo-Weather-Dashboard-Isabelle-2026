@@ -8,18 +8,17 @@ export async function POST(request: Request) {
     const client = await clientPromise;
     const db = client.db("dashboard_db");
 
-    // Prüfen, ob User schon existiert
     const existingUser = await db.collection("users").findOne({ email });
     if (existingUser) {
       return NextResponse.json({ message: "E-Mail existiert bereits" }, { status: 400 });
     }
 
-    // User speichern
+  
     const result = await db.collection("users").insertOne({
       firstName,
       lastName,
       email,
-      password, // Hinweis: Später verschlüsseln wir das Passwort!
+      password, 
       createdAt: new Date(),
     });
 

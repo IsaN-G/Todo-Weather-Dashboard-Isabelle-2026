@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const client = await clientPromise;
     const db = client.db("dashboard_db");
 
-    // 1. Suchen, ob ein User mit dieser E-Mail existiert
+   
     const user = await db.collection("users").findOne({ email });
 
     if (!user) {
@@ -18,7 +18,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Passwort vergleichen (einfacher Textvergleich für den Anfang)
     if (user.password !== password) {
       return NextResponse.json(
         { message: "Das Passwort ist leider falsch." },
@@ -26,8 +25,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Erfolg! Wir geben die Daten zurück, damit das Dashboard sie anzeigen kann
-    return NextResponse.json({
+    const response = NextResponse.json({
       message: "Login erfolgreich",
       user: {
         firstName: user.firstName,
@@ -35,6 +33,16 @@ export async function POST(request: Request) {
         email: user.email
       }
     });
+
+    response.cookies.set('isLoggedIn', 'true', {
+      path: '/',
+      httpOnly: false, 
+      maxAge: 60 * 60 * 24, 
+      sameSite: 'lax',
+    });
+
+    return response;
+    
   } catch (e) {
     console.error("Login Fehler:", e);
     return NextResponse.json(
