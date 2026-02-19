@@ -71,8 +71,8 @@ export default function TodoList({ searchTerm, initialTodos = [] }: TodoListProp
             key={todo._id} 
             className={`flex items-center justify-between p-5 rounded-[1.5rem] border-2 transition-all group ${
               todo.completed 
-              ? "bg-gray-50 border-transparent opacity-60" 
-              : "bg-white border-gray-100 hover:border-blue-200 shadow-sm"
+              ? "bg-gray-100 border-transparent opacity-60" 
+              : "bg-gray-100 border-gray-200 hover:border-blue-200 shadow-sm"
             }`}
           >
          

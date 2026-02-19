@@ -17,7 +17,7 @@ interface StatCardProps {
 
 function StatCard({ label, value, icon: Icon, iconColor, bgColor }: StatCardProps) {
   return (
-    <div className="bg-white p-6 rounded-[2rem] shadow-sm flex items-center gap-4 border border-gray-100 transition-all hover:shadow-md">
+    <div className="bg-white p-6 rounded-[2rem] shadow-sm flex items-center gap-4 border border-gray-300 transition-all hover:shadow-md">
       <div className={`p-3 rounded-2xl ${bgColor}`}>
         <Icon size={24} className={iconColor} />
       </div>
@@ -37,34 +37,34 @@ export default function StatCards({ todos = [] }: { todos: Todo[] }) {
   const successRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4  ">
       <StatCard 
         label="Erfolgsquote" 
         value={`${successRate}%`} 
         icon={TrendingUp} 
         iconColor="text-green-600" 
-        bgColor="bg-green-100" 
+        bgColor="bg-green-200" 
       />
       <StatCard 
         label="Offen" 
         value={`${openTasks}`} 
         icon={Target} 
         iconColor="text-blue-600" 
-        bgColor="bg-blue-100" 
+        bgColor="bg-blue-200" 
       />
       <StatCard 
         label="Erledigt" 
         value={`${completedTasks}`} 
         icon={CheckCircle2} 
-        iconColor="text-emerald-600" 
-        bgColor="bg-emerald-100" 
+        iconColor="text-orange-600" 
+        bgColor="bg-orange-200" 
       />
       <StatCard 
         label="Gesamt" 
         value={`${totalTasks}`} 
         icon={Calendar} 
         iconColor="text-purple-600" 
-        bgColor="bg-purple-100" 
+        bgColor="bg-purple-200" 
       />
     </div>
   );

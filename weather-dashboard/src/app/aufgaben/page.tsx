@@ -57,7 +57,7 @@ export default async function AufgabenPage() {
             </div>
           </div>
 
-          <div className="bg-blue-600 rounded-[2.5rem] p-8 text-white shadow-lg relative overflow-hidden group">
+          <div className="bg-gray-800 rounded-[2.5rem] p-8 text-white shadow-lg relative overflow-hidden group">
             <div className="relative z-10">
               <h3 className="text-xl font-bold mb-2">Produktivität</h3>
               <p className="text-blue-100 text-sm mb-4">Du hast insgesamt {todos.length - openCount} Aufgaben erledigt.</p>

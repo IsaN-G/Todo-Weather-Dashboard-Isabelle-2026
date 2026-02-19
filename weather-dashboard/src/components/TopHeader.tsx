@@ -59,7 +59,7 @@ export default function TopHeader({ name, onSearch, notificationCount }: TopHead
           )}
         </Link>
 
-        <div className="bg-blue-800 p-3.5 rounded-2xl shadow-lg border-2 border-gray-800">
+        <div className="bg-gray-900 p-3.5 rounded-2xl shadow-lg border-2 border-gray-800">
           <User size={22} className="text-white" />
         </div>
       </div>
