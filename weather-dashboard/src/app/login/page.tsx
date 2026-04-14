@@ -16,29 +16,18 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
-      
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userName", data.user.firstName);
-        localStorage.setItem("userLastName", data.user.lastName);
-        localStorage.setItem("userEmail", data.user.email);
-
-       
         document.cookie = `isLoggedIn=true; path=/; max-age=86400; SameSite=Lax`;
-        document.cookie = `userName=${data.user.firstName}; path=/; max-age=86400; SameSite=Lax`;
-
         router.replace("/");
-        setTimeout(() => { window.location.href = "/"; }, 100);
       } else {
         setError(data.message || "Anmeldung fehlgeschlagen");
       }
@@ -50,57 +39,71 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F7F6] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10 border-2 border-white">
-        <div className="flex flex-col items-center mb-8">
-          <div className="bg-blue-600 p-4 rounded-2xl shadow-lg shadow-blue-100 mb-4">
-            <LogIn className="text-white" size={32} />
+    // Hintergrund mit animiertem Gradient (über CSS-Animation in globals.css oder Tailwind)
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-900 via-blue-800 to-teal-700">
+      
+      {/* Glas-Karte */}
+      <div className="relative w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] p-10">
+        
+        {/* Glow-Effekte im Hintergrund der Karte */}
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-teal-500/30 rounded-full blur-3xl"></div>
+
+        <div className="relative z-10">
+          <div className="flex flex-col items-center mb-10">
+            <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md border border-white/30 shadow-inner mb-4">
+              <LogIn className="text-white" size={32} />
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight">Willkommen</h1>
+            <p className="text-blue-100/70 font-bold text-xs uppercase tracking-[0.2em] mt-2">Personal Dashboard</p>
           </div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Willkommen zurück</h1>
-          <p className="text-gray-400 font-bold text-sm uppercase tracking-widest mt-2">Dashboard Login</p>
+
+          {error && (
+            <div className="bg-red-500/20 backdrop-blur-md border border-red-500/50 text-white p-4 rounded-2xl mb-6 flex items-center gap-3">
+              <AlertCircle size={20} className="text-red-300" />
+              <p className="text-xs font-bold uppercase tracking-wide">{error}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[11px] font-black uppercase text-blue-100/50 ml-4 tracking-wider">E-Mail Adresse</label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-100/40 group-focus-within:text-white transition-colors" size={18} />
+                <input 
+                  required type="email" placeholder="name@beispiel.de"
+                  className="w-full bg-white/5 border border-white/10 py-4 pl-12 pr-6 rounded-2xl outline-none focus:bg-white/10 focus:border-white/40 transition-all text-white font-medium placeholder:text-blue-100/30"
+                  value={email} onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[11px] font-black uppercase text-blue-100/50 ml-4 tracking-wider">Passwort</label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-100/40 group-focus-within:text-white transition-colors" size={18} />
+                <input 
+                  required type="password" placeholder="••••••••"
+                  className="w-full bg-white/5 border border-white/10 py-4 pl-12 pr-6 rounded-2xl outline-none focus:bg-white/10 focus:border-white/40 transition-all text-white font-medium placeholder:text-blue-100/30"
+                  value={password} onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full bg-white text-blue-900 py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-blue-50 hover:scale-[1.02] transition-all shadow-[0_10px_20px_-5px_rgba(255,255,255,0.3)] active:scale-95 disabled:opacity-50 mt-6"
+            >
+              {loading ? "Wird geprüft..." : "Einloggen"}
+              {!loading && <ArrowRight size={18} />}
+            </button>
+          </form>
+
+          <p className="text-center mt-10 text-sm font-medium text-blue-100/60">
+            Neu hier? <Link href="/register" className="text-white font-black hover:underline underline-offset-4">Konto erstellen</Link>
+          </p>
         </div>
-
-        {error && (
-          <div className="bg-red-50 border-2 border-red-100 text-red-600 p-4 rounded-2xl mb-6 flex items-center gap-3 animate-shake">
-            <AlertCircle size={20} />
-            <p className="text-xs font-black uppercase">{error}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-gray-400 ml-4">E-Mail Adresse</label>
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input 
-                required type="email" placeholder="name@beispiel.de"
-                className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
-                value={email} onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-gray-400 ml-4">Passwort</label>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input 
-                required type="password" placeholder="••••••••"
-                className="w-full bg-gray-50 py-4 pl-12 pr-6 rounded-2xl border-2 border-transparent outline-none focus:border-blue-400 focus:bg-white transition-all font-bold text-sm"
-                value={password} onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-gray-900 transition-all shadow-lg active:scale-95 disabled:opacity-50 mt-4">
-            {loading ? "Wird geprüft..." : "Einloggen"}
-            {!loading && <ArrowRight size={18} />}
-          </button>
-        </form>
-
-        <p className="text-center mt-8 text-sm font-medium text-gray-500">
-          Neu hier? <Link href="/register" className="text-blue-600 font-bold hover:underline">Konto erstellen</Link>
-        </p>
       </div>
     </div>
   );
