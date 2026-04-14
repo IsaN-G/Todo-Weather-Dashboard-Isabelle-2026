@@ -1,36 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const pathname = usePathname();
-  const router = useRouter();
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const authStatus = localStorage.getItem("isLoggedIn") === "true";
-      
-      setIsLoggedIn(authStatus);
-
-      if (!authStatus && pathname !== "/login" && pathname !== "/register") {
-        router.replace("/login");
-      }
-    };
-
-    checkAuth();
-  }, [pathname, router]);
-
   
+  // Wir prüfen nur, ob wir auf einer Auth-Seite sind
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+
   return (
     <html lang="de" suppressHydrationWarning> 
       <body className="bg-[#F4F7F6]" suppressHydrationWarning>
-        {isLoggedIn === null ? (
-          <div className="flex items-center justify-center min-h-screen">Laden...</div>
-        ) : pathname === "/login" || pathname === "/register" ? (
+        {isAuthPage ? (
           children
         ) : (
           <div className="flex min-h-screen">
